@@ -32,6 +32,7 @@ export function InstanceAIForm(props: IInstanceAIForm) {
     formState: { errors, isSubmitting },
   } = useForm<AIFormValues>({
     defaultValues: {
+      LLM_BASE_URL: config["LLM_BASE_URL"],
       LLM_API_KEY: config["LLM_API_KEY"],
       LLM_MODEL: config["LLM_MODEL"],
     },
@@ -39,23 +40,25 @@ export function InstanceAIForm(props: IInstanceAIForm) {
 
   const aiFormFields: TControllerInputFormField<AIFormValues>[] = [
     {
+      key: "LLM_BASE_URL",
+      type: "text",
+      label: "Base URL",
+      description: (
+        <>
+          OpenAI-compatible API endpoint. Leave empty to use OpenAI&apos;s official API. Examples:
+          https://api.deepseek.com/v1, https://dashscope.aliyuncs.com/compatible-mode/v1, http://localhost:11434/v1
+          (Ollama).
+        </>
+      ),
+      placeholder: "https://api.deepseek.com/v1",
+      error: Boolean(errors.LLM_BASE_URL),
+      required: false,
+    },
+    {
       key: "LLM_MODEL",
       type: "text",
       label: "LLM Model",
-      description: (
-        <>
-          Choose an OpenAI engine.{" "}
-          <a
-            href="https://platform.openai.com/docs/models/overview"
-            target="_blank"
-            className="text-accent-primary hover:underline"
-            rel="noreferrer"
-            aria-label="OpenAI models documentation"
-          >
-            Learn more
-          </a>
-        </>
-      ),
+      description: <>Any model name served by your provider, e.g. deepseek-chat, qwen-plus, gpt-4o-mini.</>,
       placeholder: "gpt-4o-mini",
       error: Boolean(errors.LLM_MODEL),
       required: false,
@@ -64,21 +67,8 @@ export function InstanceAIForm(props: IInstanceAIForm) {
       key: "LLM_API_KEY",
       type: "password",
       label: "API key",
-      description: (
-        <>
-          You will find your API key{" "}
-          <a
-            href="https://platform.openai.com/api-keys"
-            target="_blank"
-            className="text-accent-primary hover:underline"
-            rel="noreferrer"
-            aria-label="OpenAI API keys page"
-          >
-            here.
-          </a>
-        </>
-      ),
-      placeholder: "sk-asddassdfasdefqsdfasd23das3dasdcasd",
+      description: <>API key for your provider. Local servers without authentication accept any non-empty value.</>,
+      placeholder: "sk-...",
       error: Boolean(errors.LLM_API_KEY),
       required: false,
     },
@@ -102,8 +92,11 @@ export function InstanceAIForm(props: IInstanceAIForm) {
     <div className="space-y-8">
       <div className="space-y-3">
         <div>
-          <div className="pb-1 text-18 font-medium text-primary">OpenAI</div>
-          <div className="text-13 font-regular text-tertiary">If you use ChatGPT, this is for you.</div>
+          <div className="pb-1 text-18 font-medium text-primary">AI Provider</div>
+          <div className="text-13 font-regular text-tertiary">
+            Works with any OpenAI-compatible provider: OpenAI, DeepSeek, Qwen, Ollama, vLLM, one-api / LiteLLM
+            gateways and more.
+          </div>
         </div>
         <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-x-12 gap-y-8 lg:grid-cols-3">
           {aiFormFields.map((field) => (
@@ -135,10 +128,8 @@ export function InstanceAIForm(props: IInstanceAIForm) {
         <div className="relative inline-flex items-center gap-1.5 rounded-sm border border-accent-subtle bg-accent-subtle px-4 py-2 text-caption-sm-regular text-accent-secondary">
           <ThoughtsOutline className="size-4" />
           <div>
-            If you have a preferred AI models vendor, please get in{" "}
-            <a className="font-medium underline" href="https://plane.so/contact">
-              touch with us.
-            </a>
+            Point Base URL at any OpenAI-compatible endpoint. For keyless local servers (e.g. Ollama), set any
+            non-empty value as the API key.
           </div>
         </div>
       </div>
